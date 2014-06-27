@@ -1,5 +1,8 @@
 package com.example.notetaker.fragment;
 
+import com.example.notetaker.R;
+import com.example.notetaker.models.Note;
+
 import android.app.ListFragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -11,7 +14,11 @@ import android.widget.TextView;
 
 public class NotesListFragment extends ListFragment {
 
-	private static String[] notes = new String[]{"one", "two", "three"};
+	private static Note[] notes = new Note[] {
+		new Note("Title", "This is a sample Note"),
+		new Note("Title", "This is a sample Note"),
+		new Note("Title", "This is a sample Note")
+	};
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -43,9 +50,14 @@ public class NotesListFragment extends ListFragment {
 
 		@Override
 		public View getView(int pos, View view, ViewGroup viewGroup) {
-			TextView tView = new TextView(mContext);
-			tView.setText(notes[pos]);
-			return tView;
+			if(view == null)
+				view = LayoutInflater.from(mContext).inflate(R.layout.list_item_note, null);
+
+			TextView titleTextView = (TextView)view.findViewById(R.id.item_note_title);
+			titleTextView.setText(notes[pos].title);
+			TextView contentTextView = (TextView)view.findViewById(R.id.item_note_content);
+			contentTextView.setText(notes[pos].content);
+			return view;
 		}
 	}
 }
