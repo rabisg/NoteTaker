@@ -6,6 +6,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
     tools:context="com.example.notetaker.MainActivity$PlaceholderFragment" >
 
     <LinearLayout
@@ -52,4 +53,9 @@
 		        style="?android:attr/buttonBarButtonStyle" />
 	    </LinearLayout>
     </LinearLayout>
+    <fragment
+        android:id="@+id/noteListFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:name="com.example.notetaker.fragment.NotesListFragment" />
 </LinearLayout>
