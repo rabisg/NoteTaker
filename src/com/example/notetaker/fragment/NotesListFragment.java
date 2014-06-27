@@ -14,15 +14,22 @@ import android.widget.TextView;
 
 public class NotesListFragment extends ListFragment {
 
+	private static NotesListAdapter notesListAdapter;
 	private static Note[] notes = new Note[] {
 		new Note("Title", "This is a sample Note"),
 		new Note("Title", "This is a sample Note"),
 		new Note("Title", "This is a sample Note")
 	};
 
+	public static void addNote(Note n) {
+		notes[0] = n;
+		notesListAdapter.notifyDataSetChanged();
+	}
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		setListAdapter(new NotesListAdapter(getActivity()));
+		notesListAdapter = new NotesListAdapter(getActivity());
+		setListAdapter(notesListAdapter);
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
@@ -44,7 +51,6 @@ public class NotesListFragment extends ListFragment {
 
 		@Override
 		public long getItemId(int arg0) {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 
