@@ -3,27 +3,24 @@ package com.example.notetaker;
 import android.app.Activity;
 import android.app.ActionBar;
 import android.app.Fragment;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.os.Build;
 
-public class MainActivity extends Activity {
+public class NoteActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_note);
 
 		if (savedInstanceState == null) {
 			getFragmentManager().beginTransaction()
-					.add(R.id.container, new HomeFragment()).commit();
+					.add(R.id.container, new PlaceholderFragment()).commit();
 		}
 	}
 
@@ -31,7 +28,7 @@ public class MainActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
+		getMenuInflater().inflate(R.menu.note, menu);
 		return true;
 	}
 
@@ -50,34 +47,18 @@ public class MainActivity extends Activity {
 	/**
 	 * A placeholder fragment containing a simple view.
 	 */
-	public static class HomeFragment extends Fragment implements OnClickListener {
+	public static class PlaceholderFragment extends Fragment {
 
-		Button newNoteButton;
-		
-		public HomeFragment() {
+		public PlaceholderFragment() {
 		}
 
 		@Override
 		public View onCreateView(LayoutInflater inflater, ViewGroup container,
 				Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_home, container, false);
-			newNoteButton = (Button)rootView.findViewById(R.id.button1);
-			newNoteButton.setOnClickListener(this);
+			View rootView = inflater.inflate(R.layout.fragment_note, container,
+					false);
 			return rootView;
 		}
-
-		@Override
-		public void onClick(View view) {
-			// TODO Auto-generated method stub
-			switch(view.getId()) {
-				case R.id.button1:
-					Intent intent = new Intent(getActivity(), NoteActivity.class);
-					startActivity(intent);
-					break;
-			}
-		}
-
-		
 	}
 
 }
