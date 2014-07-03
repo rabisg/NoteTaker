@@ -9,6 +9,8 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -69,6 +72,7 @@ public class MainActivity extends Activity {
 		EditText editText;
 		ListView notesList;
 		NotesListAdapter notesListAdapter;
+		NoteTakerDBHelper dbHelper;
 
 		public HomeFragment() {
 		}
@@ -81,7 +85,12 @@ public class MainActivity extends Activity {
 			newNoteButton = (Button) rootView.findViewById(R.id.button1);
 			newNoteButton.setOnClickListener(this);
 
-			notesListAdapter = new NotesListAdapter(getActivity());
+			dbHelper = new NoteTakerDBHelper(getActivity());
+			SQLiteDatabase db = dbHelper.getReadableDatabase();
+			Cursor cursor = db.query("Notes", null, null, null, null, null,
+					null, null);
+			notesListAdapter = new NotesListAdapter(getActivity(), cursor);
+
 			notesList = (ListView) rootView.findViewById(R.id.notes_list);
 			notesList.setAdapter(notesListAdapter);
 
@@ -105,8 +114,10 @@ public class MainActivity extends Activity {
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 			if (actionId == EditorInfo.IME_ACTION_DONE) {
 				String noteContent = editText.getText().toString();
-				notesListAdapter.notes.add(new Note("", noteContent));
-				notesListAdapter.notifyDataSetChanged();
+				Note note = new Note(getActivity(), "", noteContent);
+				note.save();
+				// notesListAdapter.notes.add(note);
+				// notesListAdapter.notifyDataSetChanged();
 				editText.setText("");
 				return true;
 			}
@@ -114,46 +125,56 @@ public class MainActivity extends Activity {
 		}
 	}
 
-	public static class NotesListAdapter extends BaseAdapter {
+	public static class NotesListAdapter extends CursorAdapter {
 
-		public Vector<Note> notes = new Vector<Note>();
-		Context mContext;
-
-		NotesListAdapter(Context cxt) {
-			mContext = cxt;
-			// notes.add(new Note("Title", "Content"));
+		public NotesListAdapter(Context context, Cursor c) {
+			super(context, c, true);
 		}
 
 		@Override
-		public int getCount() {
-			return notes.size();
+		public void bindView(View view, Context cxt, Cursor cursor) {
+			TextView title = (TextView) view.findViewById(R.id.note_title);
+			title.setText(cursor.getString(1));
+			TextView content = (TextView) view.findViewById(R.id.note_content);
+			content.setText(cursor.getString(2));
 		}
 
 		@Override
-		public Note getItem(int pos) {
-			return notes.elementAt(pos);
-		}
-
-		@Override
-		public long getItemId(int arg0) {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public View getView(int pos, View view, ViewGroup viewGroup) {
-			View noteView = LayoutInflater.from(mContext).inflate(
+		public View newView(Context cxt, Cursor cursor, ViewGroup viewGroup) {
+			View noteView = LayoutInflater.from(cxt).inflate(
 					R.layout.single_note_layout, null);
 			TextView title = (TextView) noteView.findViewById(R.id.note_title);
-			title.setText(notes.elementAt(pos).title);
+			title.setText(cursor.getString(1));
 			TextView content = (TextView) noteView
 					.findViewById(R.id.note_content);
-			content.setText(notes.elementAt(pos).content);
+			content.setText(cursor.getString(2));
 			return noteView;
-			// TextView textView = new TextView(mContext);
-			// textView.setText(notes.elementAt(pos).content);
-			// return textView;
 		}
+
+		/*
+		 * public Vector<Note> notes = new Vector<Note>(); Context mContext;
+		 * 
+		 * NotesListAdapter(Context cxt) { mContext = cxt; // notes.add(new
+		 * Note("Title", "Content")); }
+		 * 
+		 * @Override public int getCount() { return notes.size(); }
+		 * 
+		 * @Override public Note getItem(int pos) { return notes.elementAt(pos);
+		 * }
+		 * 
+		 * @Override public long getItemId(int arg0) { // TODO Auto-generated
+		 * method stub return 0; }
+		 * 
+		 * @Override public View getView(int pos, View view, ViewGroup
+		 * viewGroup) { View noteView = LayoutInflater.from(mContext).inflate(
+		 * R.layout.single_note_layout, null); TextView title = (TextView)
+		 * noteView.findViewById(R.id.note_title);
+		 * title.setText(notes.elementAt(pos).title); TextView content =
+		 * (TextView) noteView .findViewById(R.id.note_content);
+		 * content.setText(notes.elementAt(pos).content); return noteView; //
+		 * TextView textView = new TextView(mContext); //
+		 * textView.setText(notes.elementAt(pos).content); // return textView; }
+		 */
 
 	}
 }
